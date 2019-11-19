@@ -10,9 +10,9 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 15:15 - 16:15:
 
-16:15-17:15:
+16:15 - 17:15:
 
-## Notes to keep in mind in advance
+## Notes to keep in mind
 
 1. Install the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/)
 
