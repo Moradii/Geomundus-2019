@@ -10,7 +10,7 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 15:15 - 16:15:
 
-16:15 - 17:15:
+16:15 - 17:15: Introduction to trend and change-point detection through different showcases, power of test and type I error, satellite images time series analysis + exercises (Mehdi)
 
 ## Notes to keep in mind
 
