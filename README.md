@@ -8,7 +8,7 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 ## Workshop program
 
-15:15 - 16:15:
+15:15 - 16:15: Introductory walk-through to RGISTools for retrieving and customizing satellite imagery + exercises (Manuel)
 
 16:15 - 17:15: Introduction to trend and change-point detection through different showcases, power of test and type I error, satellite images time series analysis + exercises (Mehdi)
 
@@ -16,7 +16,9 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 1. Install the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/)
 
-2. Packages used in part 1:
+2. Packages used in part 1: 
+[devtools](https://cran.r-project.org/web/packages/devtools/index.html),
+[RGISTools](https://github.com/spatialstatisticsupna/RGISTools#installation)
 
 3. Packages used in part 2: [trend](https://cran.r-project.org/web/packages/trend/index.html), [ecp](https://cran.r-project.org/web/packages/ecp/index.html), [remote](https://cran.r-project.org/web/packages/remote/index.html),
 [gimms](https://cran.r-project.org/web/packages/gimms/index.html),
