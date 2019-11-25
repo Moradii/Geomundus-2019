@@ -18,4 +18,10 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 2. Packages used in part 1:
 
-3. Packages used in part 2:
+3. Packages used in part 2: [trend](https://cran.r-project.org/web/packages/trend/index.html), [ecp](https://cran.r-project.org/web/packages/ecp/index.html), [remote](https://cran.r-project.org/web/packages/remote/index.html),
+[gimms](https://cran.r-project.org/web/packages/gimms/index.html),
+[repmis](https://cran.r-project.org/web/packages/repmis/index.html),
+[plotKML](https://cran.r-project.org/web/packages/plotKML/index.html),
+[sp](https://cran.r-project.org/web/packages/sp/index.html),
+[zoo](https://cran.r-project.org/web/packages/zoo/index.html),
+[raster](https://cran.r-project.org/web/packages/raster/index.html)
