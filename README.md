@@ -14,7 +14,7 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 ## Notes to keep in mind
 
-1. Bring your loptop
+1. Bring your laptop
 
 2. Install the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/)
 
