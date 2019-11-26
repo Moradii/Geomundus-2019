@@ -14,13 +14,17 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 ## Notes to keep in mind
 
-1. Install the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/)
+1. Bring your loptop
 
-2. Packages used in part 1: 
+2. Install the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/)
+
+3. Install [Google Earth](https://www.google.com/earth/versions/)
+
+4. Packages used in part 1: 
 [devtools](https://cran.r-project.org/web/packages/devtools/index.html),
 [RGISTools](https://github.com/spatialstatisticsupna/RGISTools#installation)
 
-3. Packages used in part 2: [trend](https://cran.r-project.org/web/packages/trend/index.html), [ecp](https://cran.r-project.org/web/packages/ecp/index.html), [remote](https://cran.r-project.org/web/packages/remote/index.html),
+5. Packages used in part 2: [trend](https://cran.r-project.org/web/packages/trend/index.html), [ecp](https://cran.r-project.org/web/packages/ecp/index.html), [remote](https://cran.r-project.org/web/packages/remote/index.html),
 [gimms](https://cran.r-project.org/web/packages/gimms/index.html),
 [repmis](https://cran.r-project.org/web/packages/repmis/index.html),
 [plotKML](https://cran.r-project.org/web/packages/plotKML/index.html),
