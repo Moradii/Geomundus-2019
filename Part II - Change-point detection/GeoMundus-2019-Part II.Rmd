@@ -290,10 +290,3 @@ Distinguishing actual change-points from false positives needs further investiga
 
 
 ## References
-
-
-
-
-
-
-
