@@ -25,8 +25,8 @@ sres<-modSearch("MOD11A2",
                 endDate=as.Date("2018-12-31"))
 modDownload(sres,
             AppRoot = './Geomundus-2019/Data/Castellon/MOD11A2',
-            username = "rgistools",
-            password = "EspacialUPNA88",
+            username = "geomundus2019",
+            password = "Geomundus2019",
             bFilter=c("LST_Day_1KM",
                       "LST_Night_1KM"),
             extract.tif = T)
