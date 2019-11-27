@@ -1,0 +1,299 @@
+---
+title: "Geomundus-2019  Satellite images time series analysis workshop - Part II"
+author: "Mehdi Moradi"
+date: "`r Sys.Date()`"
+output: 
+html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+    toc_depth: 2
+bibliography: GeoMundusPartII.bib
+link-citations: yes
+---
+
+### Copyright
+
+Availability of material under [CC-BY-SA](https://creativecommons.org/licenses/by-sa/2.0/).
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Table of content
+
+1. Examples of time-ordered data with/without trend and change-point (16:15 - 16:25)
+2. Hands-on practice with simulated data - vector/matrix (16:25 - 16:45)
+3. Hands-on practice with real data (16:45 - 17:15)
+
+
+## 1. Examples of time-ordered data with/without trend and change-point
+
+Change-point detection is a topic that has been around for decades and it has often been considered together with trend detection.
+
+**Change-point**: distributional or structural change in data in a way that the distribution of data before change-point somehow differs from the distribution of data after change-point.
+
+**Trend**: Slowly departure from the past norm of data.
+
+```{r,fig.height = 7,out.width = '95%',fig.align = "center"}
+set.seed(1234)
+x <- rnorm(200)
+y <- arima.sim(n=200,model = list(ar=0.8))
+t <- seq(1,4,length.out = 200)
+w <- x+t
+z <- c(x[1:60],x[61:200]+2)
+
+par(mfrow=c(2,2))
+ts.plot(x,main="randomly normally-distributed");ts.plot(y,main="timely correlated");ts.plot(w,main="upward trend");ts.plot(z,main="abrupt change")
+```
+
+**More complicated cases**
+
+```{r,fig.height = 7,out.width = '95%',fig.align = "center"}
+set.seed(1234)
+x <- rnorm(200)
+t <- seq(1,4,length.out = 100)
+w <- x+c(t,rev(t))
+w1 <- x+c(t,rep(t[100],100))
+z <- c(x[1:60],x[61:120]+2,x[121:200]-2)
+z1 <- sin(c(1:100))+runif(100,-0.1,0.1)
+
+par(mfrow=c(2,2))
+ts.plot(w,main="trend upward/downward");ts.plot(w1,main="trend upward/stable");ts.plot(z,main="abrupt change");ts.plot(z1,main="seasonality")
+```
+
+**Abrupt change vs trend**
+```{r,fig.height = 7,out.width = '50%',fig.align = "center",message=FALSE,warning=FALSE}
+library(gplots)
+set.seed(123)
+x <- rnorm(200)
+y <- c(1:200)
+z <- c(x[1:100],x[101:200]+2)
+ts.plot(z)
+lines(lowess(y,z,f=.8), col="red",lwd=2)
+lines(lowess(y[1:100],z[1:100],f=.8), col="blue",lwd=4)
+lines(lowess(y[101:200],z[101:200],f=.8), col="gold",lwd=4)
+
+```
+
+**Notes:**
+
+1. A fitted model to time-ordered data might not always be valid.
+
+2. Abrupt changes make (unreal) trends.
+
+## 2. Hands-on practice with simulated data
+
+**Hypothesis of trend detection methods:**
+
+$\mathcal{H}_0$: data is independently and randomly ordered, vs 
+$\mathcal{H}_1$: there exist an/a upward/downward trend in data.
+
+
+**Mann-Kendall:** 
+
+We now apply the Mann-Kendall method to a normally-distributed data as follows:
+```{r,message=FALSE,warning=FALSE}
+library(trend)
+set.seed(123)
+x <- rnorm(200)
+mk.test(x)
+```
+
+We next make an artificial change of magnitude 2 at time 101
+
+```{r,message=FALSE,warning=FALSE}
+z <- c(x[1:100],x[101:200]+2)
+mk.test(z)
+```
+
+**Hypothesis of change-point detection methods:**
+
+$\mathcal{H}_0$: there is no change-point in data, vs 
+$\mathcal{H}_1$: there exist at least one change-point.
+
+We now make use of the method e.divisive for the same simulated data.
+
+**E.divisive:** 
+
+```{r,message=FALSE,warning=FALSE}
+library(ecp)
+e.divisive(matrix(x,ncol = 1),sig.lvl=.05)
+e.divisive(matrix(z,ncol = 1),sig.lvl=.05)
+```
+
+**Simulation from AR(0.8)**
+
+```{r,message=FALSE,warning=FALSE}
+set.seed(1234)
+x.ar <- arima.sim(168,model = list(ar=0.8))
+mk.test(x.ar)
+e.divisive(matrix(x.ar,ncol = 1),sig.lvl=.05)
+```
+
+### Exercise 1:
+
+1. Simulate 400 normally-distributed, average 0 and standard deviation 1, vectors of length 168.
+
+2. Apply the Mann-Kendall and E.divisive methods to all 400 normally distributed vectors and check for how many vectors they detect trend/change-points.
+
+3. Make two groups, each of length 200, of 400 normally-distributed vectors. For the first group produce an artificial change of magnitude 0.5 at time 21. For the second group produce an artificial change of magnitude 0.5 at time 81. Let the produced change last until the end of the time series.
+
+4. For each group, apply Mann-Kendall and E.divisive to all vectors and check for how many vectors they detect the produced artificial change.
+
+5. Repeat the steps 1-2 for data generated from an autoregressive time series with parameter 0.8.
+
+## 3. Hands-on practice with real data
+We now load the \textsf{R} packages needed for this section.
+
+```{r,message=FALSE,warning=FALSE}
+library(repmis)
+library(remote)
+library(trend)
+library(ecp)
+library(gimms)
+library(plotKML)
+library(sp)
+library(raster)
+library(tmap)
+```
+
+Monthly LST remote sensing data of Castellon, during period 2001-2018, can be read/prepared as follows:
+
+```{r,message=FALSE,warning=FALSE}
+
+source_data("https://github.com/Moradii/Geomundus-2019/blob/master/Castellon/Data/lst_day_castellon_monthly.RData?raw=True")
+
+source_data("https://github.com/Moradii/Geomundus-2019/blob/master/Castellon/Data/castellon_border.RData?raw=True")
+
+castellon <- spTransform(castellon, CRS("+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs"))
+
+lst.day <- mask(lst.day.castellon.monthly,castellon)
+Sys.setlocale("LC_ALL","English")
+library(zoo)
+names(lst.day) <- as.yearmon(seq(as.Date("2001/1/1"), as.Date("2018/12/31"), "month"))
+
+```
+
+We now, in a step-by-step study, go through LST, day-time, remote sensing data of Castellon.
+
+```{r,fig.height = 7,out.width = '100%',fig.align = "center",message=FALSE,warning=FALSE}
+spplot(lst.day[[1:12]])
+boxplot(lst.day[[1:36]],xaxt='n',main="LST day 2001 - 2003")
+
+lst.day.d <- deseason(lst.day) #deseason data
+names(lst.day.d) <- as.yearmon(seq(as.Date("2001/1/1"), as.Date("2018/12/31"), "month"))
+boxplot(lst.day.d[[1:36]],xaxt='n',main="deseasoned LST day 2001 - 2003")
+
+cas_d <- aggregate(lst.day.d,fac=4,mean)
+spplot(cas_d[[1:12]])
+boxplot(cas_d[[1:36]],xaxt='n',main="aggregated deseasoned LST day 2001 - 2003")
+
+# check the temporal autocorrelation in data
+pacfs <- lapply(X=1:ncell(cas_d), function(i){
+  x <- cas_d[i]
+  if(!anyNA(x)){return(pacf(x,plot = FALSE))}
+  else{return(0)}
+})
+pacf_coef <- numeric()
+for (i in 1:length(pacfs)) {
+  if(class(pacfs[[i]])=="numeric"){pacf_coef[i] <- NA}
+  else{pacf_coef[i] <- pacfs[[i]]$acf[1]}
+}
+
+mean(pacf_coef[!is.na(pacf_coef)])
+summary(pacf_coef[!is.na(pacf_coef)])
+par(mar=rep(4,4))
+boxplot(pacf_coef[!is.na(pacf_coef)])
+
+# display obtained PACF coefficient per pixel as an image
+pacf.day.image <- cas_d[[1]]
+pacf.day.image@data@values <- pacf_coef
+ckey <- list(labels=list(cex=1.5))
+spplot(pacf.day.image,colorkey=ckey,scales=list(draw=T,cex=1.4))
+
+# check the spatial autocorrelation
+moran <- unlist(
+  lapply(X=1:nlayers(cas_d), function(i){
+    Moran(cas_d[[i]])
+  })
+)
+plot(moran,type="l")
+summary(moran)
+
+# check if there is temporal autocorrelation in obtained spatial autocorrelations
+pacf(moran)
+cas_d@data@names[which.max(moran)]
+
+# we now apply the Mann-Kendall method to LST remote sensing data of Castellon
+par(mfrow=c(1,1))
+mk <- significantTau(cas_d,prewhitening = F,p=0.001)
+cells.mk <- Which(mk,cells=T)
+# pacf_coef[cells.trd1]
+mk.len <- length(cells.mk)  
+plot(mk)
+plot(castellon,add=TRUE)
+
+# apply the E.divisive method to all detected pixels with change/trend based on Mann-Kendall
+e.div <- list()
+for (i in 1:mk.len) {
+  e.div[[i]] <- e.divisive(as.matrix(as.numeric(cas_d[cells.mk[i]]),ncol=1),sig.lvl=.001)$estimates
+}
+ln <- unlist(lapply(e.div,length))
+
+# represent the pixels detected by both methods
+mk.day.div <- mk
+mk.day.div@data@values[-c(cells.mk[which(ln>2)])] <- NA
+plot(mk.day.div)
+plot(castellon,add=TRUE)
+
+tmap_leaflet(tm_shape(mk.day.div) +
+  tm_raster(alpha = 0.75) +
+  tm_view(set.view = 8))
+```
+
+Distinguishing actual change-points from false positives needs further investigation. A wider study on the performance of trend/change-point detection methods can be found in [@Militino19].
+
+### Exercise 2:
+
+1. Load lst_nigth_castellon_monthly.RData
+
+2. Load castellon_border.RData. 
+
+3. Mask the lst night data using the border of the province of Castellon.
+
+4. Check if there is seasonality in lst night data.
+
+5. Remove the seasonality component, if there is.
+
+6. You can make aggregation for simplicity.
+
+7. Calculate partial autocorrelations for all pixel time series and plot its spatial variation.
+
+8. Calculate Moran's I statistics for all monthly images, make a time series of obtained values per monthly LST image, and check its partial autocorrelation.
+
+9. Apply the Mann-Kendall method to the aggregated lst night.
+
+10. Make use of the E.divisive method for all detected pixels by Mann-Kendall and plot the matches.
+
+
+### Homework (if interested!!!):
+
+1. Repeat the exercise 2 for LST and NDVI remote sensing data of Nordrhein Westfalen.
+
+2. Repeat the exercise 2 for LST and NDVI remote sensing data of Lisbon.
+
+
+
+
+
+
+## References
+
+
+
+
+
+
+
