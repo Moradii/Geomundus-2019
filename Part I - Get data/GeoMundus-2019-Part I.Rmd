@@ -1,8 +1,6 @@
 ---
-title: Retrieve and process satellite images time series towards data analysis in
-  R
-author: Montesino-SanMartin, M., Perez-Goya, U., Moradi, M., Ugarte, M.D., Militino,
-  A.F.
+title: Retrieve and process satellite images time series towards data analysis in R
+author: Montesino-SanMartin, M., Perez-Goya, U., Moradi, M., Ugarte, M.D., Militino, A.F.
 date: "UPNA"
 output:
   html_document:
@@ -31,20 +29,20 @@ There are several packages in `R` dealing with satellite images (e.g.,
 
   - **Centralize**: Three major sources of freely accessible satellite images;
   Landsat, MODIS, and Sentinel. Their combination increases the spatio-temporal
-  resolution of the remotely sensed information (e.g., data fusion techniques
+  resolution of remotely sensed information (e.g., data fusion techniques
   as in @df2019). A *single access point* can foster multi-program
-  imagery analyses.
+  analyses.
   
   - **Standardize**: Satellite programs differ in their data standards and
   formats (compression formats, naming conventions, bands, tiling systems,
   etc.). Web services offer different sharing protocols (GUIs and APIs) and
   data products. Programming can deal with this complexity in the background
-  and offer *consistent experience* to the user.
+  and offer a *consistent experience* to the user.
   
   - **Automate**: The analysis of the earth's surface patterns and dynamics
   frequently requires long series of images. Also, data-sets must undergo
   multiple transformations from acquisition to analysis. We found convenient
-  to develop a *comprehensive* package and facilitates the use of 
+  to develop a *comprehensive* package that facilitates the use of 
   *computationally efficient* routines.
 
 ## Workflow
@@ -53,7 +51,7 @@ There is a large number of functions in `RGISTools`. Functions are named in a
 systematic way to easily find the function best suited for an specific 
 satellite program and purpose:
 
-  1. A *prefix* of the function's name indicates the data source:
+  1. The *prefix* of the function's name indicates the data source:
 
   - **Landsat program**:
     * `ls`: Functions devoted to Landsat imagery.
@@ -64,24 +62,25 @@ satellite program and purpose:
   - **Copernicus program**:
     * `sen`: Functions devoted to Sentinel(-2) imagery.
   
-  2. A *suffix* reflects the functionality:
+  2. The *suffix* reflects the functionality:
 
   - **Retrieve**: getting data
     * `Search`: find imagery for a given ROI and time-span.
-    * `Preview`: inspect the overlap with ROI and cloud coverage.
+    * `Preview`: inspect the overlap with the ROI and cloud coverage.
     * `Download`: acquire images massively. 
   - **Customize**: manufacturing data
-    * `Mosaic`: bind tiles and clip the extent of ROI.
+    * `Mosaic`: combine tiles/scenes and clip the extent of the ROI.
     * `FolderToVar`: calculate indexes, such as NDVI.
   - **Process**: cleaning data
     * `CloudMask`: remove the values of cloudy pixels.
-    * `Composition`: generate regular series and improve image quality.
+    * `Composition`: generate regular series and improve image quality (e.g.,
+    @mosaic1998).
     * `SmoothingIMA`: gap-filling and smoothing data to resolve missing values
     and outliers [@militino2019].
 
 For instance, the function that downloads Sentinel images is called 
 `senDownload()`. There are other functions in the package not mentioned
-in this list.
+in this list. Right now, the package is focused on multispectral images.
 
 ---
 
@@ -93,12 +92,13 @@ Today's demo:
  difference vegetation index (NDVI) - an indicator of vegetation greenness - and
  the land surface temperatures (LST).
  * The analysis concerns Castellón (Spain) and Nordrhein-Westfalen (Germany).
- * The time period of analysis is 2001 and 2018.
+ * The time period of analysis covers 2001-2018.
 
 In this first session:
 
   * Download and customize (*a sample of*) the data-set for the analysis.
-  * Walk-through with Castellón and exercises with Nordrhein-Westfalen.
+  * Walk-through with Castellón and NDVI.
+  * Exercises with Nordrhein-Westfalen and LST.
 
 ## Set-outs
 
@@ -116,7 +116,7 @@ library(RGISTools)
 
 ### Accounts
 
-The package interacts with the **Earth Data** and **SciHub** web services. Web
+The package interacts with the **EarthData** and **SciHub** web services. Web
 services provide access to archives of satellite images. They require a profile
 that you can create [here](https://urs.earthdata.nasa.gov/users/new) and 
 [here](https://scihub.copernicus.eu/dhus/#/self-registration). For this workshop,
@@ -127,11 +127,13 @@ username <- "geomundus2019"
 password <- "Geomundus2019"
 ```
 
+(The profile will be deleted after the workshop. Make sure to register)
+
 ### Region of interest (ROI)
 
 Since we are dealing with administrative divisions, we use the database of
-global administrative division maps provided by `raster` [@raster2019]. The
-following code downloads the shape-file of Spain with its provinces:
+Global Administrative Division Maps provided by `raster` [@raster2019]. The
+following code downloads the shape-file of Spain and its provinces:
 
 ```{r roispain}
 spain <- getData('GADM', country = "Spain", level = 2)
@@ -144,8 +146,9 @@ castellon <- subset(spain, NAME_2 == "Castellón")
 ```
 
 We can display the results using `tmap` [@tmap2018]. The package is loaded with
-`RGISTools` and used for visualization since it supports many spatial data
-formats, is flexible, and allows interactive and static maps with the same code.
+`RGISTools` and used for visualization. The `tmap` package supports many spatial
+data formats, is flexible, and allows interactive and static maps with the same
+code.
 
 We set the option to display interactive maps:
 
@@ -153,7 +156,7 @@ We set the option to display interactive maps:
 tmap_mode("view")
 ```
 
-We view our `SpatialPolygonDataFrame` on a map:
+We display our `SpatialPolygonDataFrame` of Castellon on a map:
 
 ```{r showroi}
 tm_shape(castellon) +
@@ -193,7 +196,7 @@ The function requires the definition of:
   images. These are named **MOD13A2** and **MOD11A2** respectively. The full
   catalogue of products is available [here](https://modis.gsfc.nasa.gov/data/dataprod/).
   2. The ROI (`region`): An `sf`, `Spatial*`, or `raster` class object.
-  3. The time period (`dates`): A (vector of) `Date` class object (s).
+  3. The time period (`dates`): A (vector of) `Date` class object(s).
 
 ```{r search}
 sres.ndvi <- modSearch(product = "MOD13A2",
@@ -203,8 +206,7 @@ sres.ndvi <- modSearch(product = "MOD13A2",
 ```
 
 The function returns a vector of URLs with the series of MODIS images concerning
-our ROI and relevant time-period. We can extract useful information from the
-results like:
+our ROI and time-period. We can extract useful information from the results.
 
 The total number of images that are found:
 
@@ -229,7 +231,8 @@ length(sres.dates)
 
 Results show that there are 1656 images, as a combination of 4 tiles (h18v05,
 h17v04, h17v05, h18v04) and 414 dates (approximately, 2 n/month  x 12months/year
-x 18 years). The dates confirm that time frequency of this product is 16 days. 
+x 18 years). The dates confirm that temporal frequency of this product is 16
+days. 
 
 ### Exercise
 
@@ -264,7 +267,7 @@ on disk), which has two implications:
   
   - RAM: Images are handled externally to `R` (GDAL via `sf`, @sf2019 
     whenever possible). The series of images are loaded at the end, when the
-    data set contains only useful information for the analysis.
+    data-set contains only useful information for the analysis.
   - Disk: strategies via arguments (see below).
 
   2. **File management issues**: a clear hierarchy of files and folder is key.
@@ -296,8 +299,8 @@ The function creates two new folders:
   * `./exercises/ndvi/tif`: contains the extracted bands, being each band a
   separate `GeoTiff`.
   
-This 4 images take around 51 MB and 150 MB for the `HDF` and `GeoTiff` files!
-We can be more efficient by being more specific with the arguments:
+These 4 images take around 51 MB and 150 MB with the `HDF` and `GeoTiff` files!
+To be more efficient, we can specify:
 
   * `bFilter`: converts into `GeoTiffs` only the relevant bands.
   * `raw.rm`: removes the raw files once the `GeoTiffs` are created.
@@ -328,7 +331,7 @@ Then, the folders:
   * `./exercises/ndvi/hdf`: has no image.
   * `./exercises/ndvi/tif`: contains one band.
 
-We went from 201 MB to 11 MB. Note that the second time, the function run faster.
+We went from 201 MB to 11 MB. Note that the second time, the function runs faster.
 `modDownload()` detects that the original files are there and therefore, only
 converts the bands to `GeoTiffs`.
 
@@ -336,15 +339,14 @@ converts the bands to `GeoTiffs`.
 
   1. Create a new directory for the LST images.
   2. Run the function to download the first LST image.
-  3. Remember to filter the bands extracted (`"LST_Day_1km"`) and
+  3. Remember to filter the bands that are extracted (`"LST_Day_1km"`) and
   indicate `raw.rm = TRUE`.
 
 Replace the `<>` code conveniently:
 
 ```{r exercise3, eval=FALSE}
 wdir.lst <- <LSTDIRECTORY>
-modDownload(searchres = sres.lst[1],
-            <MOREARGUMENTS>)
+modDownload(<ARGUMENTS>)
 ```
 
 ---
@@ -357,8 +359,7 @@ modDownload(searchres = sres.lst[1],
 different tiles. **Cropping** means removing the pixels outside the bounding box
 of the ROI. Both tasks are carried out by `modMosaic()`, which requires:
 
-  1. The folder directory (`src` argument) that stores the `GeoTiff`s 
-  (`<DIRECTORYTIF>`).
+  1. The folder directory (`src` argument) that stores the `GeoTiff`s.
   2. If needed, a ROI (`region` argument) around which images are cropped.
   3. The name of the folder (`out.name`) where the results will be saved.
   4. The directory (`AppRoot` argument) defined with the argument.
@@ -371,21 +372,19 @@ modMosaic(src = wdir.ndvi.tif,
           AppRoot = wdir.ndvi)
 ```
 
-You will notice the new folder that has been added to your `./`. The
-folders are:
+You will notice the new folder that has been added to the current working
+directory. Now, the folders are:
 
   * `./exercises/ndvi/hdf`: has no image.
   * `./exercises/ndvi/tif`: contains one band.
   * `./exercises/ndvi/castellon`: contains the mosaicked image.
 
-Thanks to cropping, the size of memory storage consumed by our data set is
-now roughly 0.36 MB.
+Thanks to cropping, now the size of memory storage consumed by our data-set is
+roughly 0.36 MB.
 
 ### Exercise
 
-  1. Download the file `lst_geomundus` from the github repository. 
-  2. Save it in your `<DIRECTORY>`. The folder contains an image of LST
-  covering Nordrhein-Westfalen captured on 2018-01-01 by MODIS Terra.
+  1. Define the directory where your LST `GeoTiff` image is saved.
   3. Mosaic and crop the image around Nordrhein-Westfalen (`nordhrein`
   variable).
 
@@ -394,8 +393,8 @@ Replace the `<>` code conveniently:
 ```{r exercise4, eval=FALSE}
 wdir.lst.tif <- <LSTDIRECTORYTIF>
 modMosaic(src = wdir.lst.tif,
-          AppRoot = "<LSTDIRECTORY>",
-          <MOREARGUMENTS>)
+          <OTHERARGUMENTS>,
+          AppRoot = <LSTDIRECTORY>)
 ```
 
 ---
@@ -403,7 +402,7 @@ modMosaic(src = wdir.lst.tif,
 ## Import and visualize
 
 We can import the imagery using the `stack()` function from the `raster` package
-[@raster2019], as follows:
+[@raster2019] as follows:
 
 ```{r import, message=FALSE}
 wdir.ndvi.mos <- file.path(wdir.ndvi, "castellon")
@@ -411,17 +410,18 @@ files.ndvi <- list.files(wdir.ndvi.mos, full.names = TRUE, recursive = TRUE)
 imgs.ndvi <- stack(files.ndvi)
 ```
 
-Pixels values are between -32768 and 32768. It is necessary to re-scale the
-image to the [-1,1] NDVI range. Information about the scaling parameter
-can be found in the [product catalogue](https://lpdaac.usgs.gov/products/mod13a2v006/).
+It is necessary to re-scale the image to the [-1,1] NDVI range. Information
+about the scaling parameter can be found in the 
+[product catalogue](https://lpdaac.usgs.gov/products/mod13a2v006/).
 There, we find that the re-scaling factor is 0.0001:
 
 ```{r rescale}
 imgs.ndvi <- imgs.ndvi * 0.0001
 ```
 
-`RGISTools` has the `genPlotGIS()` function to help you visualize your data.
-It a wrapper function of `tmap` [@tmap2018]. The basic inputs are:
+`RGISTools` has the `genPlotGIS()` function to visualize your data. It is a
+wrapper function of `tmap` [@tmap2018], configured to rapidly display the
+spatial data usually handled within the package. The basic inputs are:
 
   1. A `RasterStack` of satellite images (`r` argument).
   2. The ROI (`region` argument).
@@ -437,8 +437,8 @@ genPlotGIS(r = imgs.ndvi,
 ### Exercise
 
   1. Import your LST image. 
-  2. Find out if the image must to be re-scaled and, if so, apply the scaling
-  factor.
+  2. Find out whether the image must to be re-scaled and, if so, define and 
+  apply the scaling factor.
   [hint](https://lpdaac.usgs.gov/products/mod11a2v006/).
   3. Show your results on a map.
   
@@ -446,10 +446,10 @@ Replace the `<>` code conveniently:
 
 ```{r exercise5, eval=FALSE}
 wdir.lst <- <LSTDIRECTORYMOSAIC>
-files.lst <- list.files(wdir.lst, full.names = TRUE, recursive = TRUE)
+files.lst <- <FILES>
 imgs.lst <- stack(files.lst)
 
-scale.factor <- "<SCALEFACTOR>" # no re-scaling, set to 1 
+scale.factor <- <SCALEFACTOR> # no re-scaling, set to 1 
 imgs.lst <- imgs.lst * scale.factor
 genPlotGIS(<CODE>)
 ```
@@ -460,18 +460,19 @@ genPlotGIS(<CODE>)
 
   * The package is a way to access, customize, and process time-series of 
   satellite imagery from several platforms.
-  * As an introduction, we downloaded and customized MODIS LST and NDVI images
-  for two locations: Castellon (Spain) and Nordhrein-Westfalen (Germany).
+  * As an introduction, we just downloaded and customized LST and NDVI images
+  from MODIS for two locations: Castellon (Spain) and Nordhrein-Westfalen 
+  (Germany).
   * Being memory efficient is key to work locally with satellite images. The
   package offers several strategies (band filtering, mosaicking, GDAL, etc.).
-  * It is crucial to develop a clear hierarchy of files and folders 
-  created in each step.
+  * It is crucial to develop a clear hierarchy for the files and folders 
+  created along the working steps.
   * The walk-through and exercises focused on MODIS, but multispectral data
   from other satellite programs can be similarly retrieved.
   * The walk-through and exercises cover the download and customization, and
-  neglects the processing (cloud masking, compositing, and filling-smoothing).
-
-Stay tuned for new vignettes at:
-https://github.com/spatialstatisticsupna/RGISTools
+  does not cover the processing (cloud masking, compositing, and
+  filling-smoothing).
+  * Stay tuned for new vignettes at:
+  https://github.com/spatialstatisticsupna/RGISTools
 
 # References

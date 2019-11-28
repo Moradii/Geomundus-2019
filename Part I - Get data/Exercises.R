@@ -1,5 +1,5 @@
 ###############################################################################
-# GEOMUNDUS 2019
+# GEOMUNDUS 2019 - EXERCISES
 ###############################################################################
 # Montesino-SanMartin, M., Perez-Goya, U., Moradi, M., Ugarte, M.D., Militino, A.F.
 # UPNA
@@ -46,7 +46,7 @@ length(sres.dates)
 ###############################################################################
 # EXERCISE 3: DOWNLOAD
 ###############################################################################
-wdir.lst <- "./exercises/lst"
+wdir.lst <- file.path("./", "exercises", "lst")
 modDownload(searchres = sres.lst[1],
             AppRoot = wdir.lst,
             username = "geomundus2019",
@@ -55,7 +55,7 @@ modDownload(searchres = sres.lst[1],
             bFilter = "LST_Day_1km",
             raw.rm = TRUE)
 
-# wdir/tif: one image (2.75 MB)
+# ./exercises/lst/tif: 1 image (2.75 MB)
 
 ###############################################################################
 # EXERCISE 4: MOSAIC
@@ -64,19 +64,19 @@ wdir.lst.tif <- file.path(wdir.lst, "tif")
 modMosaic(src = wdir.lst.tif,
           region = nordrhein,
           out.name = "nordrhein",
-          AppRoot = wdir.st)
+          AppRoot = wdir.lst)
 
-# wdir/tif: one image (2.75 MB)
-# wdir/nordrhein: one image (125 KB)
+# ./exercises/lst/tif: one image (2.75 MB)
+# ./exercises/lst/nordrhein: one image (125 KB)
 
 ###############################################################################
 # EXERCISE 5: IMPORT AND SHOW
 ###############################################################################
-wdir.lst <- file.path(wdir, "nordrhein")
-files.lst <- list.files(wdir.lst, full.names = TRUE, recursive = TRUE)
+wdir.lst.mos <- file.path(wdir.lst, "nordrhein")
+files.lst <- list.files(wdir.lst.mos, full.names = TRUE, recursive = TRUE)
 imgs.lst <- stack(files.lst)
 
-# From MODIS MOD11A2 data product website
+# From the MODIS MOD11A2 data product website
 # Scaling factor for layer LST_Day_1km, 0.02
 # Check: https://lpdaac.usgs.gov/products/mod11a2v006/
 scale.factor <- 0.02
