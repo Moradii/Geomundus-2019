@@ -32,13 +32,13 @@ modDownload(sres,
 
 
 modMosaic(src='./Lisbon/Data/tif',
-          AppRoot ='D:/UPNA/GeoMundus2019/lisbon',
+          AppRoot ='./Lisbon/Data',
           out.name = "lisbon",
           overwrite = TRUE,
           region=Lisbon)
 
 
-ndvi.lisbon.tif <- list.files('E:/GeoMundus/MOD13A3/lisbon',
+ndvi.lisbon.tif <- list.files('./Lisbon/Data/lisbon',
                                   full.names = TRUE,
                                   pattern = "NDVI\\.tif$",
                                   recursive=T)
@@ -50,7 +50,7 @@ ndvi.lisbon.monthly<-readAll(ndvi.lisbon.monthly)
 save(list=c("ndvi.lisbon.monthly"),file ="ndvi_lisbon_monthly.RData")
 
 
-evi.lisbon.tif<-list.files('E:/GeoMundus/MOD13A3/lisbon',
+evi.lisbon.tif<-list.files('./Lisbon/Data/lisbon',
                                    full.names = TRUE,
                                    pattern = "EVI\\.tif$",
                                    recursive=T)
