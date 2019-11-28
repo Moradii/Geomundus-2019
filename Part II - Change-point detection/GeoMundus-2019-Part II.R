@@ -1,8 +1,8 @@
-## ----setup, include=FALSE------------------------------
+## ----setup, include=FALSE---------------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
 
 
-## ----fig.height = 7,out.width = '95%',fig.align = "center"----
+## ----fig.height = 7,out.width = '95%',fig.align = "center"------------------------
 set.seed(1234)
 x <- rnorm(200)
 y <- arima.sim(n=200,model = list(ar=0.8))
@@ -14,7 +14,7 @@ par(mfrow=c(2,2))
 ts.plot(x,main="randomly normally-distributed");ts.plot(y,main="timely correlated");ts.plot(w,main="upward trend");ts.plot(z,main="abrupt change")
 
 
-## ----fig.height = 7,out.width = '95%',fig.align = "center"----
+## ----fig.height = 7,out.width = '95%',fig.align = "center"------------------------
 set.seed(1234)
 x <- rnorm(200)
 t <- seq(1,4,length.out = 100)
@@ -40,32 +40,32 @@ lines(lowess(y[101:200],z[101:200],f=.8), col="gold",lwd=4)
 
 
 
-## ----message=FALSE,warning=FALSE-----------------------
+## ----message=FALSE,warning=FALSE--------------------------------------------------
 library(trend)
 set.seed(123)
 x <- rnorm(200)
 mk.test(x)
 
 
-## ----message=FALSE,warning=FALSE-----------------------
+## ----message=FALSE,warning=FALSE--------------------------------------------------
 z <- c(x[1:100],x[101:200]+2)
 mk.test(z)
 
 
-## ----message=FALSE,warning=FALSE-----------------------
+## ----message=FALSE,warning=FALSE--------------------------------------------------
 library(ecp)
 e.divisive(matrix(x,ncol = 1),sig.lvl=.05)
 e.divisive(matrix(z,ncol = 1),sig.lvl=.05)
 
 
-## ----message=FALSE,warning=FALSE-----------------------
+## ----message=FALSE,warning=FALSE--------------------------------------------------
 set.seed(1234)
 x.ar <- arima.sim(168,model = list(ar=0.8))
 mk.test(x.ar)
 e.divisive(matrix(x.ar,ncol = 1),sig.lvl=.05)
 
 
-## ----message=FALSE,warning=FALSE-----------------------
+## ----message=FALSE,warning=FALSE--------------------------------------------------
 library(repmis)
 library(remote)
 library(trend)
@@ -77,7 +77,7 @@ library(raster)
 library(tmap)
 
 
-## ----message=FALSE,warning=FALSE-----------------------
+## ----message=FALSE,warning=FALSE--------------------------------------------------
 
 source_data("https://github.com/Moradii/Geomundus-2019/blob/master/Castellon/Data/lst_day_castellon_monthly.RData?raw=True")
 

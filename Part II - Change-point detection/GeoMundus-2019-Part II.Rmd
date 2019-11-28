@@ -13,7 +13,7 @@ bibliography: GeoMundusPartII.bib
 link-citations: yes
 ---
 
-### Copyright
+### License
 
 Availability of material under [CC-BY-SA](https://creativecommons.org/licenses/by-sa/2.0/).
 
