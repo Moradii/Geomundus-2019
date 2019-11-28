@@ -1,6 +1,6 @@
 library(RGISTools)
 
-Regions <- raster::getData('GADM', country='Portugal', level=2,path='D:/UPNA/GeoMundus2019')
+Regions <- raster::getData('GADM', country='Portugal', level=2, path='./')
 class(Regions)
 Lisbon <-subset(Regions,NAME_2=="Lisboa")
 spplot(Lisbon)
@@ -16,7 +16,6 @@ sres <- modSearch("MOD13A2",
                   endDate=as.Date("2018-12-31"))
 modGetDates(sres)
 library(mapview)
-modPreview(sres,dates=as.Date("2001-01-01"))+mapview(Lisbon)
 
 sres <- modSearch("MOD13A2",
                   resType = "url",
@@ -24,15 +23,15 @@ sres <- modSearch("MOD13A2",
                   startDate=as.Date("2001-01-01"),
                   endDate=as.Date("2018-12-31"))
 modDownload(sres,
-            AppRoot = 'D:/UPNA/GeoMundus2019/lisbon',
+            AppRoot = './Lisbon/Data',
             username = "geomundus2019",
             password = "Geomundus2019",
-            bFilter= c("NDVI",
+            bFilter = c("NDVI",
                       "EVI"),
             extract.tif = T)
 
 
-modMosaic(src='D:/UPNA/GeoMundus2019/lisbon1/tif',
+modMosaic(src='./Lisbon/Data/tif',
           AppRoot ='D:/UPNA/GeoMundus2019/lisbon',
           out.name = "lisbon",
           overwrite = TRUE,

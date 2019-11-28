@@ -16,7 +16,6 @@ sres <- modSearch("MOD11A2",
                 endDate=as.Date("2018-12-31"))
 modGetDates(sres)
 library(mapview)
-modPreview(sres,dates=as.Date("2001-01-01"))+mapview(Lisbon)
 
 sres <- modSearch("MOD11A2",
                 resType = "url",

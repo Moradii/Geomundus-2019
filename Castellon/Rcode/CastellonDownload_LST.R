@@ -2,7 +2,7 @@ library(RGISTools)
 
 Regions<- raster::getData('GADM', country='Spain', level=2,path='./GeoMundus')
 class(Regions)
-castellon<-subset(Regions,NAME_2=="Castellón")
+castellon<-subset(Regions,NAME_2=="Castell?n")
 spplot(castellon)
 castellon<-st_as_sf(castellon)
 castellon<-castellon[1]
@@ -16,7 +16,6 @@ sres<-modSearch("MOD11A2",
                 endDate=as.Date("2018-12-31"))
 modGetDates(sres)
 library(mapview)
-modPreview(sres,dates=as.Date("2001-01-01"))+mapview(castellon)
 
 sres<-modSearch("MOD11A2",
                 resType = "url",
