@@ -14,9 +14,10 @@ spain <- getData('GADM', country = "Spain", level = 2)
 castellon <- subset(spain, NAME_2 == "Castellón")
 # Visualization of ROI (interactive)
 tmap_mode("view")
-tm_shape(castellon) +
-  tm_polygons(col = "red") +
-  tm_view(set.view = 4)
+tmap_leaflet(
+  tm_shape(castellon) +
+    tm_polygons(col = "red") +
+    tm_view(set.view = 4))
 
 ###############################################################################
 # WALK-THROUGH 2: SEARCH

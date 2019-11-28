@@ -159,9 +159,9 @@ tmap_mode("view")
 We display our `SpatialPolygonDataFrame` of Castellon on a map:
 
 ```{r showroi}
-tm_shape(castellon) +
+tmap_leaflet(tm_shape(castellon) +
   tm_polygons(col = "red") +
-  tm_view(set.view = 4)
+  tm_view(set.view = 4))
 ```
 
 ### Exercise
@@ -175,9 +175,9 @@ Replace the `<>` code conveniently:
 germany <- getData('GADM', country = <COUNTRYNAME>, level = 2)
 nordrhein <- subset(germany, NAME_1 == <REGIONAME>)
 
-tm_shape(nordrhein) +
+tmap_leaflet(tm_shape(nordrhein) +
   tm_polygons(col = "red") +
-  tm_view(set.view = 4)
+  tm_view(set.view = 4))
 ```
 
 ---
@@ -428,10 +428,11 @@ spatial data usually handled within the package. The basic inputs are:
 
 ```{r showndvi, message=FALSE}
 tmap_mode("view")
-genPlotGIS(r = imgs.ndvi,
-           region = castellon,
-           tm.raster.r.title = "NDVI",
-           tm.raster.r.alpha = 0.35)
+tmap_leaflet(
+  genPlotGIS(r = imgs.ndvi,
+            region = castellon,
+            tm.raster.r.title = "NDVI",
+            tm.raster.r.alpha = 0.35), add.titles = FALSE)
 ```
 
 ### Exercise

@@ -14,9 +14,9 @@ germany <- getData('GADM', country = "Germany", level = 2)
 nordrhein <- subset(germany, NAME_1 == "Nordrhein-Westfalen")
 # Visualization of ROI (interactive)
 tmap_mode("view")
-tm_shape(nordrhein) +
-  tm_polygons(col = "red") +
-  tm_view(set.view = 4)
+tmap_leaflet(tm_shape(nordrhein) +
+             tm_polygons(col = "red") +
+             tm_view(set.view = 4))
 
 ###############################################################################
 # EXERCISE 2: SEARCH
