@@ -18,11 +18,17 @@ Satellite images are valuable sources to monitor the changes happening in the ea
 
 2. Install the latest versions of [R](https://cran.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/)
 
+
 3. Install [Google Earth](https://www.google.com/earth/versions/)
 
 4. Packages used in part 1: 
 [devtools](https://cran.r-project.org/web/packages/devtools/index.html),
 [RGISTools](https://github.com/spatialstatisticsupna/RGISTools#installation)
+
+        Install **RGISTools** as follows
+
+        library(devtools)
+        install_github("spatialstatisticsupna/RGISTools")
 
 5. Packages used in part 2: [trend](https://cran.r-project.org/web/packages/trend/index.html), [ecp](https://cran.r-project.org/web/packages/ecp/index.html), [remote](https://cran.r-project.org/web/packages/remote/index.html),
 [gimms](https://cran.r-project.org/web/packages/gimms/index.html),
